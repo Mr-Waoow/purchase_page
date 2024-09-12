@@ -8,7 +8,7 @@ import PaymentMethods from "./paymentMethods";
 import OrderOverview from "./orderOverview";
 import i18n from "../utils/i18n";
 
-export const Home = () => {
+export default function Home() {
   const { t } = useTranslation();
   const [selected, setSelected] = useState("GB");
   const [language, setLanguage] = useState("en");
@@ -144,5 +144,3 @@ export const Home = () => {
     </main>
   );
 };
-
-export default Home;
