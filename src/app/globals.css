@@ -1,0 +1,193 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Palanquin:wght@100;200;300;400;500;600;700&display=swap");
+/*@import url("react-international-phone/style.css");*/
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Custom CSS */
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.menu-flags>ul::-webkit-scrollbar {
+  display: none;
+}
+
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.menu-flags>ul {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.gradient {
+  background: linear-gradient(90deg, #7081f9 0%, #09b7f0 100%);
+  color: white;
+}
+
+.gradient:hover {
+  background: linear-gradient(90deg, #7686ff 0%, #0dbffa 100%);
+}
+
+.gradient:active {
+  background: linear-gradient(90deg, #6b79e9 0%, #0cade2 100%);
+}
+
+.card-shadow {
+  box-shadow: 1px 0 15px 4px #0000001a;
+}
+
+body {
+  @apply xl:text-sm lg:text-xs text-gray-500;
+}
+
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8 w-full max-w-[1200px];
+}
+
+form.grid>div {
+  @apply pt-12 pb-4 h-full;
+}
+
+.input {
+  @apply sm:flex-1 max-sm:w-full text-base leading-normal text-gray-400 pl-5 max-sm:p-5 outline-none sm:border-none border max-sm:border-gray-400 max-sm:rounded-full;
+}
+
+.menu-flags {
+  @apply p-0 m-0 !important;
+}
+
+.menu-flags-button {
+  @apply p-1 border-none !important;
+}
+
+.menu-flags-button::after {
+  @apply content-none !important;
+}
+
+.menu-flags-button>span {
+  @apply p-0 m-0 !important;
+}
+
+.menu-flags-button>span span:last-child {
+  @apply hidden !important;
+}
+
+.menu-flags-button svg {
+  @apply w-7 !important;
+}
+
+.menu-flags>ul li {
+  @apply px-2 !important;
+}
+
+.form-group {
+  @apply flex flex-col mb-6 w-full gap-1;
+}
+
+.form-group label {
+  @apply uppercase font-normal sm:font-semibold text-[10px] sm:text-xs text-gray-400;
+}
+
+.form-group label>span {
+  @apply text-gray-700 lowercase;
+}
+
+.form-group label>span span {
+  @apply underline;
+}
+
+.form-group input[type="text"],
+.form-group input[type="tel"],
+.form-group input[type="email"],
+.form-group select,
+.menu-country .menu-country-button {
+  @apply text-gray-500 border border-[#F5F7F9] rounded-sm h-8 sm:h-12 bg-[#F5F7F9] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-100 flex-grow font-semibold p-2;
+  @apply text-xs sm:text-[13px] !important;
+}
+
+.menu-country>ul {
+  @apply border border-[#f3f6f8] rounded-sm p-3 m-0 bg-[#f9fbfd];
+}
+
+.react-international-phone-input-container button,
+.react-international-phone-input-container input {
+  @apply sm:h-12 h-8 bg-[#F5F7F9] !important;
+}
+
+.react-international-phone-input-container button {
+  @apply border-none ps-1 !important;
+}
+
+
+.menu-country .menu-country-button>span:last-child {
+  @apply overflow-hidden !important;
+}
+
+input::placeholder {
+  @apply text-gray-400 !important;
+}
+
+input::-ms-input-placeholder {
+  @apply text-gray-400 !important;
+}
+
+.form-group.payment {
+  @apply mb-0 !important;
+}
+
+.form-group input.credit {
+  @apply ps-8 !important;
+}
+
+.form-group.radio {
+  @apply flex-row gap-3 sm:gap-1 flex-wrap items-center justify-center !important;
+}
+
+.form-group .radio-group {
+  @apply relative sm:justify-start flex items-center w-2/5 sm:w-[30%] !important;
+}
+
+.form-group .radio-group label {
+  @apply text-gray-300 bg-white w-full text-[0.6rem] h-14 flex items-center ps-8 pe-6 cursor-pointer !important;
+}
+
+.form-group .radio-group input {
+  @apply absolute top-0 left-0 w-0 h-0 !important;
+}
+
+.form-group .radio-group input:checked+label {
+  @apply border border-blue-600 !important;
+}
+
+.cash {
+  @apply grid grid-cols-2 gap-y-5 mt-10 !important;
+}
+
+.cash span {
+  @apply odd:text-start even:text-end uppercase font-semibold odd:text-sm odd:text-gray-400 even:text-base even:text-gray-800 !important;
+}
+
+.cash span.discount {
+  @apply text-green-500 even:text-xl font-bold !important;
+}
+
+.cash span.fee {
+  @apply capitalize !important;
+}
+
+.cash span.total {
+  @apply text-xl text-blue-700 font-bold !important;
+}
