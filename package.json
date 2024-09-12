@@ -1,15 +1,13 @@
 {
   "name": "purchase_page",
-  "homepage": "https://mr-waoow.github.io/purchase_page/",
   "version": "0.1.0",
+  "homepage": "https://mr-waoow.github.io/purchase_page/",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "react-scripts start",
+    "build": "react-scripts build"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
