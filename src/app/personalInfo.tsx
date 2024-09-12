@@ -1,10 +1,10 @@
-import React from "react";
+import React, { use, useEffect } from "react";
 import "react-international-phone/style.css";
 import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
 import { PhoneInput } from "react-international-phone";
 
-const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
+const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
   const { t } = useTranslation();
   const [loginPhoneNumber, setLoginPhoneNumber] = React.useState("");
   const [contactPhoneNumber, setContactPhoneNumber] = React.useState("");
@@ -16,30 +16,38 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
   const [billingCity, setBillingCity] = React.useState("");
   const [country, setCountry] = React.useState("");
   const [sessions, setSessions] = React.useState("8");
+
   const handleChange = () => {
     onFormDataChange({
-      loginPhoneNumber,
-      contactPhoneNumber,
-      contactName,
-      contactEmail,
-      billingAddress,
-      number,
-      billingZip,
-      billingCity,
-      country,
-      sessions,
+      loginPhoneNumber: loginPhoneNumber,
+      contactPhoneNumber: contactPhoneNumber,
+      contactName: contactName,
+      contactEmail: contactEmail,
+      billingAddress: billingAddress,
+      number: number,
+      billingZip: billingZip,
+      billingCity: billingCity,
+      country: country,
+      sessions: sessions,
     });
   };
+
+  useEffect(() => {
+    handleChange();
+  }, [
+    onFormDataChange
+  ]);
 
   const options = [];
 
   for (let i = 1; i < 7; i++) {
     options.push(
       <option key={i} value={i * 8}>
-        {i * 8 + t(" sessions")}
+        {i * 8 + " " + t("sessions")}
       </option>
     );
   }
+
   return (
     <div>
       <div className="form-group">
@@ -53,7 +61,10 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
         <PhoneInput
           defaultCountry="gr"
           value={loginPhoneNumber}
-          onChange={(phone) => setLoginPhoneNumber(phone)}
+          onChange={(phone) => {
+            setLoginPhoneNumber(phone);
+            handleChange();
+          }}
         />
       </div>
       <div className="form-group">
@@ -64,11 +75,13 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
             <span className="underline">{t("theParent")}</span>
           </span>
         </label>
-
         <PhoneInput
           defaultCountry="gr"
           value={contactPhoneNumber}
-          onChange={(phone1) => setContactPhoneNumber(phone1)}
+          onChange={(phone1) => {
+            setContactPhoneNumber(phone1);
+            handleChange();
+          }}
         />
       </div>
       <div className="form-group">
@@ -86,11 +99,12 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
           value={contactEmail}
           onChange={(e) => {
             setContactEmail(e.target.value);
+            handleChange();
           }}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="name">{t("contact name")}</label>
+        <label htmlFor="name">{t("contactName")}</label>
         <input
           type="text"
           id="name"
@@ -98,11 +112,12 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
           value={contactName}
           onChange={(e) => {
             setContactName(e.target.value);
+            handleChange();
           }}
         />
       </div>
       <div className="form-group">
-        <label>{t("billing address")}</label>
+        <label>{t("billingAddress")}</label>
         <div className="flex gap-3 mb-6">
           <input
             className="w-9/12"
@@ -112,8 +127,9 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
             value={billingAddress}
             onChange={(e) => {
               setBillingAddress(e.target.value);
+              handleChange();
             }}
-            placeholder={t("Address")}
+            placeholder={t("address")}
           />
           <input
             className="w-3/12"
@@ -123,8 +139,9 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
             value={number}
             onChange={(e) => {
               setNumber(e.target.value);
+              handleChange();
             }}
-            placeholder={t("Nr")}
+            placeholder={t("nr")}
           />
         </div>
         <div className="flex flex-wrap sm:flex-nowrap gap-3 mb-6">
@@ -136,8 +153,9 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
             value={billingZip}
             onChange={(e) => {
               setBillingZip(e.target.value);
+              handleChange();
             }}
-            placeholder={t("PostalCode")}
+            placeholder={t("postalCode")}
           />
           <input
             className="w-[40%] sm:w-4/12"
@@ -146,7 +164,8 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
             name="billingCity"
             value={billingCity}
             onChange={(e) => {
-              setBillingCity(e.target.value); 
+              setBillingCity(e.target.value);
+              handleChange();
             }}
             placeholder={t("city")}
           />
@@ -154,10 +173,11 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
             selected={country}
             onSelect={(code) => {
               setCountry(code);
+              handleChange();
             }}
             className="menu-country w-full sm:w-4/12"
             selectButtonClassName="menu-country-button"
-            placeholder={t("Country")}
+            placeholder={t("country")}
           />
         </div>
       </div>
@@ -169,6 +189,7 @@ const PersonalInfo = ({ onFormDataChange }: { onFormDataChange: any }) => {
           value={sessions}
           onChange={(e) => {
             setSessions(e.target.value);
+            handleChange();
           }}
         >
           {options}

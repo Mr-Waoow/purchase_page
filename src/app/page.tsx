@@ -23,7 +23,7 @@ export default function Home() {
     billingZip: "",
     billingCity: "",
     country: "",
-    sessions: "8",
+    sessions: "",
   });
   const [paymentMethod, setPaymentMethod] = useState({
     cardHolder: "",
@@ -38,8 +38,9 @@ export default function Home() {
     totalCoast: 0,
     discountPrice: 0,
   });
-  const handlePersonalDataChange = (data: any) => {
+  const handlePersonalDataChange = (data: Partial<PersonalData>) => {
     setPersonalInfo((prev) => ({ ...prev, ...data }));
+    console.log(data);
   };
   const handlePaymentMethodDataChange = (data: any) => {
     setPaymentMethod((prev) => ({ ...prev, ...data }));
@@ -103,7 +104,7 @@ export default function Home() {
             </div>
             <div className="bg-[#F5F7F9] flex flex-col pt-12 px-8  pb-5">
               <h5 className="font-bold  text-base text-gray-600 mb-5">
-                {t("order overview")}
+                {t("orderOverview")}
               </h5>
               <OrderOverview
                 sessions={Number(personalInfo.sessions)}

@@ -176,7 +176,7 @@ input::-ms-input-placeholder {
   @apply grid grid-cols-2 gap-y-5 mt-10 !important;
 }
 
-.cash span {
+.cash > span {
   @apply odd:text-start even:text-end uppercase font-semibold odd:text-sm odd:text-gray-400 even:text-base even:text-gray-800 !important;
 }
 

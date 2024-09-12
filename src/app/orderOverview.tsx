@@ -1,38 +1,39 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Switch from "@mui/joy/Switch";
 
-const OrderOverview = ({
-  onCoastsChange,
-  sessions,
-}: {
-  onCoastsChange: any;
-  sessions: number;
-}) => {
+const OrderOverview = (
+  { onCoastsChange, sessions }: OrderOverviewProps
+) => {
   const { t } = useTranslation();
   const radioButton = [];
-  const [discount, setDiscount] = useState<number>(4);
+  const [inAdvance, setInAdvance] = useState<boolean>(false);
+  const [discount, setDiscount] = useState<number>(inAdvance ? 9 : 4);
   const [regularPrice, setRegularPrice] = useState<number>(29.6);
   const [price, setPrice] = useState<number>(0);
   const [totalCoast, setTotalCoast] = useState<number>(0);
   const [discountPrice, setDiscountPrice] = useState<number>(0);
-  const [inAdvance, setInAdvance] = useState<boolean>(false);
   const calcCoast = (
     evt: React.ChangeEvent<HTMLInputElement>,
     discount: number
   ) => {
     const months = Number(evt.currentTarget.value); // Convert 'months' to a number
     setPrice(regularPrice - regularPrice * (discount / 100));
-    setTotalCoast(months * price * sessions);
+    setTotalCoast(months * price);
     setDiscountPrice(months * (regularPrice - price));
+    handleChange();
   };
-  for (let i = 6; i < 36; ) {
-    if (i < 12) i += 6;
+  for (let i = 3; i < 36; ) {
+    if (i > 10 && i < 20) i += 6;
+    else if (i > 20) i += 12;
     else i += 3;
     radioButton.push(
       <div className="radio-group">
         <input
-          onChange={(evt) => calcCoast(evt, discount)}
+          onChange={(evt) => {
+            calcCoast(evt, discount);
+            handleChange();
+          }}
           type="radio"
           name="month"
           value={i}
@@ -44,14 +45,23 @@ const OrderOverview = ({
   }
   const handleChange = () => {
     onCoastsChange({
-      discount,
-      regularPrice,
-      price,
-      discountPrice,
-      totalCoast,
-      inAdvance,
+      discount: discount,
+      regularPrice: regularPrice,
+      price: price,
+      discountPrice: discountPrice,
+      totalCoast: totalCoast,
+      inAdvance: inAdvance,
     });
   };
+  useEffect(() => {
+    setRegularPrice(sessions * 3.7);
+    handleChange();
+  }, [sessions]);
+  useEffect(() => {
+    handleChange();
+  }, [
+    onCoastsChange
+  ]);
   return (
     <>
       <div className="form-group radio">{radioButton}</div>
@@ -62,16 +72,17 @@ const OrderOverview = ({
           variant="outlined"
           checked={inAdvance}
           onChange={() => {
+            setDiscount(inAdvance ? 4 : 9);
             setInAdvance(!inAdvance);
-            setDiscount(inAdvance ? 9 : 4);
+            handleChange();
           }}
         />
         <label
           className="font-normal text-xs sm:text-sm sm:font-semibold text-gray-700"
           htmlFor="toggle"
         >
-          {t("PayInAdvance")}
-          <span className="font-bold uppercase">{t("PayInAdvance1")}</span>
+          {t("payInAdvance")}
+          <span className="font-bold uppercase">{t("payInAdvance1")}</span>
         </label>
       </div>
       <div className="cash">
@@ -79,20 +90,20 @@ const OrderOverview = ({
         <span>{sessions}</span>
         <span>{t("regularPrice")}</span>
         <span className="line-through">
-          {regularPrice.toFixed(2)}
+          {regularPrice.toFixed(2) + " "}
           <span>&euro;</span>
         </span>
         <span>{t("yourPrice")}</span>
         <span>
-          {price.toFixed(2)}
+          {price.toFixed(2) + " "}
           <span>&euro;</span>
         </span>
         <span className="discount">
-          {t("discount")}
-          {discount.toFixed(2)}%
+          {t("discount") + " "}
+          {discount.toFixed(2) + " "}%
         </span>
         <span className="discount">
-          -{discountPrice.toFixed(2)}
+          -{discountPrice.toFixed(2) + " "}
           <span>&euro;</span>
         </span>
         <hr className="border-2 border-white rounded-md" />
@@ -102,11 +113,11 @@ const OrderOverview = ({
           0.00 <span>&euro;</span>
         </span>
         <span>
-          {t("total")}
+          {t("total") + " "}
           p.m.
         </span>
         <span className="total">
-          {totalCoast.toFixed(2)} <span>&euro;</span>
+          {totalCoast.toFixed(2) + " "} <span>&euro;</span>
         </span>
       </div>
     </>

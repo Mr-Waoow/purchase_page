@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { PatternFormat } from "react-number-format";
 import { useTranslation } from "react-i18next";
 
-const PaymentMethods = ({
-  onPaymentMethodChange,
-  direL,
-}: {
-  onPaymentMethodChange: any;
-  direL: string;
-}) => {
+const PaymentMethods = (
+  { onPaymentMethodChange, direL }: PaymentMethodsProps
+) => {
   const { t } = useTranslation();
   const [paymentMethod, setPaymentMethod] = useState("");
   const [creditCardHolder, setCreditCardHolder] = useState("");
@@ -18,13 +14,16 @@ const PaymentMethods = ({
   const [cvv, setCvv] = useState("");
   const handleChange = () => {
     onPaymentMethodChange({
-      paymentMethod,
-      creditCardHolder,
-      cardNumber,
-      monthYear,
-      cvv,
+      paymentMethod: paymentMethod,
+      creditCardHolder: creditCardHolder,
+      cardNumber: cardNumber,
+      monthYear: monthYear,
+      cvv: cvv,
     });
   };
+  useEffect(() => {
+    handleChange();
+  }, [onPaymentMethodChange]);
   return (
     <>
       <div className="form-group payment">
@@ -40,6 +39,7 @@ const PaymentMethods = ({
                 checked={paymentMethod === "sepa"}
                 onChange={(e) => {
                   setPaymentMethod(e.target.value);
+                  handleChange();
                 }}
               />
               <label className="flex items-center" htmlFor="sepa">
@@ -62,6 +62,7 @@ const PaymentMethods = ({
                 checked={paymentMethod === "credit card"}
                 onChange={(e) => {
                   setPaymentMethod(e.target.value);
+                  handleChange();
                 }}
               />
               <label className="flex items-center gap-1" htmlFor="creditCard">
@@ -99,17 +100,13 @@ const PaymentMethods = ({
               value={creditCardHolder}
               onChange={(e) => {
                 setCreditCardHolder(e.target.value);
+                handleChange();
               }}
             />
             <div className="mt-2 flex flex-wrap sm:flex-nowrap relative">
               <Image
                 className={
-                  "absolute top-2 sm:top-[19px] " +
-                  direL +
-                  "-2 " +
-                  "sm:" +
-                  direL +
-                  "-[9px]"
+                  `absolute top-2 sm:top-[19px] ${direL}-2 sm:${direL}-[9px]`
                 }
                 src={require("../images/credit_icon.png")}
                 width={20}
@@ -134,7 +131,7 @@ const PaymentMethods = ({
                   setMonthYear(values.value);
                 }}
                 valueIsNumericString={true}
-                placeholder={t("MM/YY")}
+                placeholder={t("monthYear")}
               />
               <PatternFormat
                 className="w-2/5 sm:w-[15%]"
