@@ -8,7 +8,6 @@ interface OrderOverviewProps {
 
 interface PaymentMethodsProps {
   onPaymentMethodChange: (newData: Partial<PaymentData>) => void;
-  direL: string;
 }
 
 interface PersonalData {

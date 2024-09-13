@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import "react-international-phone/style.css";
 import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
   // Get the translation function
   const { t } = useTranslation();
   const options = [];
+  const [inIntiate, setInIntiate] = useState<boolean>(true);
   const [isInfoValid, setIsInfoValid] = useState<boolean>(false);
   const [loginPhoneNumber, setLoginPhoneNumber] = React.useState("");
   const [contactPhoneNumber, setContactPhoneNumber] = React.useState("");
@@ -40,22 +41,25 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
     billingZip: "",
     billingCity: "",
     country: "",
-    sessions: "",
   });
 
   const validateLoginPhoneNumber = (phone: string) => {
     const regex = /^\+(\d{1,3})\d{10,12}$/;
-    return regex.test(phone) ? "" :  t("invalid") + " " + t("loginPhoneNumber");
+    return regex.test(phone) ? "" : t("invalid") + " " + t("loginPhoneNumber");
   };
 
   const validateContactPhoneNumber = (phone: string) => {
     const regex = /^\+(\d{1,3})\d{10,12}$/;
-    return regex.test(phone) ? "" :  t("invalid") + " " + t("contactPhoneNumber");
+    return regex.test(phone)
+      ? ""
+      : t("invalid") + " " + t("contactPhoneNumber");
   };
 
   const validateEmail = (email: string) => {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email) ? "" : t("invalid") + " " + t("contactEmailAddress");
+    return regex.test(email)
+      ? ""
+      : t("invalid") + " " + t("contactEmailAddress");
   };
 
   const validateName = (name: string) => {
@@ -70,7 +74,7 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
 
   const validateNumber = (number: string) => {
     const regex = /^[0-9]{0,3}$/;
-    return regex.test(number) ? "" :   t("invalid") + " " + t("nr");
+    return regex.test(number) ? "" : t("invalid") + " " + t("nr");
   };
 
   const validateZip = (zip: string) => {
@@ -80,74 +84,48 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
 
   const validateCity = (city: string) => {
     const regex = /^[a-zA-Z ]{2,30}$/;
-    return regex.test(city) ? "" :  t("invalid") + " " + t("city");
+    return regex.test(city) ? "" : t("invalid") + " " + t("city");
   };
 
   const validateCountry = (country: string) => {
-    return country !== "" ? "" :   t("invalid") + " " + t("country");
-  };
-
-  const validateSessions = (sessions: string) => {
-    return sessions !== "" ? "" : t("invalid") + " " + t("sessions");
+    return country !== "" ? "" : t("invalid") + " " + t("country");
   };
 
   // Function to validate the form data
   const handleInputErrors = (name: string, value: string) => {
     let newErrors = { ...errors };
-
-    if (name === "loginPhoneNumber") {
-      newErrors.loginPhoneNumber = validateLoginPhoneNumber(value);
-      console.log(newErrors.loginPhoneNumber + "login");
+    switch (name) {
+      case "loginPhoneNumber":
+        newErrors.loginPhoneNumber = validateLoginPhoneNumber(value);
+        break;
+      case "contactPhoneNumber":
+        newErrors.contactPhoneNumber = validateContactPhoneNumber(value);
+        break;
+      case "contactName":
+        newErrors.contactName = validateName(value);
+        break;
+      case "contactEmail":
+        newErrors.contactEmail = validateEmail(value);
+        break;
+      case "billingAddress":
+        newErrors.billingAddress = validateAddress(value);
+        break;
+      case "number":
+        newErrors.number = validateNumber(value);
+        break;
+      case "billingZip":
+        newErrors.billingZip = validateZip(value);
+        break;
+      case "billingCity":
+        newErrors.billingCity = validateCity(value);
+        break;
+      case "country":
+        newErrors.country = validateCountry(value);
+        break;
+      default:
+        break;
     }
-
-    if (name === "contactPhoneNumber") {
-      newErrors.contactPhoneNumber = validateContactPhoneNumber(value);
-      console.log(newErrors.contactPhoneNumber + "contact");
-    }
-
-    if (name === "contactEmail") {
-      newErrors.contactEmail = validateEmail(value);
-      console.log(newErrors.contactEmail + "email");
-    }
-
-    if (name === "contactName") {
-      newErrors.contactName = validateName(value);
-      console.log(newErrors.contactName + "name");
-    }
-
-    if (name === "billingAddress") {
-      newErrors.billingAddress = validateAddress(value);
-      console.log(newErrors.billingAddress + "address");
-    }
-
-    if (name === "number") {
-      newErrors.number = validateNumber(value);
-      console.log(newErrors.number + "number");
-    }
-
-    if (name === "billingZip") {
-      newErrors.billingZip = validateZip(value);
-      console.log(newErrors.billingZip + "zip");
-    }
-
-    if (name === "billingCity") {
-      newErrors.billingCity = validateCity(value);
-      console.log(newErrors.billingCity + "city");
-    }
-
-    if (name === "country") {
-      newErrors.country = validateCountry(value);
-      console.log(newErrors.country + "country");
-    }
-
-    if (name === "sessions") {
-      newErrors.sessions = validateSessions(value);
-      console.log(newErrors.sessions + "sessions");
-    }
-
     setErrors(newErrors);
-
-    onFormDataChange({ [name]: value });
   };
 
   // Function to handle the change of the form data
@@ -169,7 +147,7 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
 
   //Cheak is info valid
 
-  useEffect(() => {
+  useMemo(() => {
     setIsInfoValid(
       !errors.loginPhoneNumber &&
         !errors.contactPhoneNumber &&
@@ -179,13 +157,24 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
         !errors.number &&
         !errors.billingZip &&
         !errors.billingCity &&
-        !errors.country &&
-        !errors.sessions
+        !errors.country
     );
   }, [errors]);
 
   // Call the handleChange function when the form data changes
   useEffect(() => {
+    inIntiate && setErrors({
+      loginPhoneNumber: "",
+      contactPhoneNumber: "",
+      contactName: "",
+      contactEmail: "",
+      billingAddress: "",
+      number: "",
+      billingZip: "",
+      billingCity: "",
+      country: "",
+    });
+    setInIntiate(false);
     handleChange();
   }, [
     loginPhoneNumber,

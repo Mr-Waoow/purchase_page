@@ -15,7 +15,6 @@ export default function Home() {
   const [error, setError] = useState(false);
   const [selected, setSelected] = useState("GB");
   const [language, setLanguage] = useState("en");
-  const [direction, setDirection] = useState("left");
   const [personalInfo, setPersonalInfo] = useState({
     loginPhoneNumber: "",
     contactPhoneNumber: "",
@@ -43,7 +42,6 @@ export default function Home() {
     totalCoast: 0,
     discountPrice: 0,
     inAdvance: false,
-    isOrderValid: false,
   });
   const handlePersonalDataChange = (data: Partial<PersonalData>) => {
     setPersonalInfo((prev) => ({ ...prev, ...data }));
@@ -61,7 +59,6 @@ export default function Home() {
     if (language === "en") {
       document.querySelector("html")?.setAttribute("lang", "en");
       document.querySelector("html")?.setAttribute("dir", "ltr");
-      setDirection("left");
       inputs.forEach((input) => {
         input.setAttribute("dir", "ltr");
       });
@@ -79,18 +76,11 @@ export default function Home() {
     if (isTermsChecked) {
       if (
         personalInfo.isPersonalInfoValid &&
-        paymentMethod.isPaymentMethodValid &&
-        order.isOrderValid
+        paymentMethod.isPaymentMethodValid
       )
         alert("Order Submitted");
       else setError(true);
     } else setIsErrorTerm(true);
-
-    console.log(
-      personalInfo.isPersonalInfoValid + "info",
-      paymentMethod.isPaymentMethodValid + "payment",
-      order.isOrderValid + "order"
-    );
   };
 
   useEffect(() => {
@@ -130,7 +120,6 @@ export default function Home() {
               </div>
               <PersonalInfo onFormDataChange={handlePersonalDataChange} />
               <PaymentMethods
-                direL={direction}
                 onPaymentMethodChange={handlePaymentMethodDataChange}
               />
             </div>

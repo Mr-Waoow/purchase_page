@@ -5,11 +5,10 @@ import { useTranslation } from "react-i18next";
 
 const PaymentMethods = ({
   onPaymentMethodChange,
-  direL,
 }: PaymentMethodsProps) => {
   const { t } = useTranslation();
-  const [isPaymentMethodValid, setIsPaymentMethodValid] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
+  const [isPaymentMethodValid, setIsPaymentMethodValid] = useState(false);
   const [creditCardHolder, setCreditCardHolder] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [monthYear, setMonthYear] = useState("");
@@ -17,16 +16,11 @@ const PaymentMethods = ({
 
   // Create the state for the errors
   const [errors, setErrors] = useState({
-    paymentMethod: "",
     creditCardHolder: "",
     cardNumber: "",
     monthYear: "",
     cvv: "",
   });
-
-  const validatePaymentMethod = (paymentMethod: string) => {
-    return paymentMethod ? "" : t("invalid") + " " + t("selectPaymentMethod");
-  };
 
   const validateCardHolder = (cardHolder: string) => {
     const regex = /^[a-zA-Z\s]*$/;
@@ -64,9 +58,6 @@ const PaymentMethods = ({
       case "cvv":
         newErrors.cvv = validateCvv(value);
         break;
-      case "paymentMethod":
-        newErrors.paymentMethod = validatePaymentMethod(value);
-        break;
       default:
         break;
     }
@@ -76,7 +67,6 @@ const PaymentMethods = ({
   // Create the handleChange function
   const handleChange = () => {
     onPaymentMethodChange({
-      paymentMethod: paymentMethod,
       creditCardHolder: creditCardHolder,
       cardNumber: cardNumber,
       monthYear: monthYear,
@@ -88,7 +78,6 @@ const PaymentMethods = ({
   //Cheak isPaymentMethodValid
   useEffect(() => {
     setIsPaymentMethodValid(
-      !errors.paymentMethod &&
         !errors.creditCardHolder &&
         !errors.cardNumber &&
         !errors.monthYear &&
@@ -98,28 +87,23 @@ const PaymentMethods = ({
 
   // Create the useEffect hook
   useEffect(() => {
+    document.getElementById("creditCard")?.click();
     handleChange();
-  }, [paymentMethod, creditCardHolder, cardNumber, monthYear, cvv,isPaymentMethodValid]);
+  }, [creditCardHolder, cardNumber, monthYear, cvv,isPaymentMethodValid]);
   return (
     <>
       <div className="form-group payment">
         <label>{t("selectPaymentMethod")}</label>
         <div className="flex flex-col border border-gray-100 pt-3 pb-8">
-          <div
-            className="flex flex-col border-b ps-3 pe-4 pt-3 pb-1"
-            onPointerOut={() =>
-              handleInputErrors("paymentMethod", paymentMethod)
-            }
-          >
+          <div className="flex flex-col border-b ps-3 pe-4 pt-3 pb-1">
             <div className="flex gap-2">
               <input
                 type="radio"
                 name="paymentMethod"
                 id="sepa"
                 value="sepa"
-                checked={paymentMethod === "sepa"}
-                onChange={(e) => {
-                  setPaymentMethod(e.target.value);
+                onClick={(e) => {
+                  setPaymentMethod((e.target as HTMLInputElement).value);
                   handleChange();
                 }}
               />
@@ -140,9 +124,8 @@ const PaymentMethods = ({
                 name="paymentMethod"
                 id="creditCard"
                 value="credit card"
-                checked={paymentMethod === "credit card"}
-                onChange={(e) => {
-                  setPaymentMethod(e.target.value);
+                onClick={(e) => {
+                  setPaymentMethod((e.target as HTMLInputElement).value);
                   handleChange();
                 }}
               />
@@ -173,9 +156,6 @@ const PaymentMethods = ({
                 />
               </label>
             </div>
-            {errors.paymentMethod && (
-              <span className="warning">{errors.paymentMethod}</span>
-            )}
             <input
               type="text"
               id="creditCardHolder"

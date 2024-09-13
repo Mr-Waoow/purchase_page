@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Switch from "@mui/joy/Switch";
 
 const OrderOverview = ({ onCoastsChange, sessions }: OrderOverviewProps) => {
   const { t } = useTranslation();
   const radioButton = [];
+  const [inIntiate, setInIntiate] = useState<boolean>(true);
   const [inAdvance, setInAdvance] = useState<boolean>(false);
-  const [isMonth, setIsMonth] = useState<boolean>(false);
-  const [isMonthClicked, setIsMonthClicked] = useState<boolean>(true);
-  const [isTerm, setIsTerm] = useState<boolean>(false);
+  const [months, setMonths] = useState<number>(0);
   const [discount, setDiscount] = useState<number>(inAdvance ? 9 : 4);
-  const [regularPrice, setRegularPrice] = useState<number>(29.6);
-  const [price, setPrice] = useState<number>(0);
-  const [totalCoast, setTotalCoast] = useState<number>(0);
+  const [regularPrice, setRegularPrice] = useState<number>(sessions * 3.7);
+  const [price, setPrice] = useState<number>(regularPrice - regularPrice * (discount / 100));
   const [discountPrice, setDiscountPrice] = useState<number>(0);
-  const calcCoast = (
-    evt: React.ChangeEvent<HTMLInputElement>,
-    discount: number
-  ) => {
-    const months = Number(evt.currentTarget.value); // Convert 'months' to a number
+  const [totalCoast, setTotalCoast] = useState<number>(0);
+  const calcCoast = () => {
+    handleChange();
+    setRegularPrice(sessions * 3.7);
     setPrice(regularPrice - regularPrice * (discount / 100));
     setTotalCoast(months * price);
     setDiscountPrice(months * (regularPrice - price));
@@ -31,9 +28,10 @@ const OrderOverview = ({ onCoastsChange, sessions }: OrderOverviewProps) => {
     radioButton.push(
       <div className="radio-group">
         <input
-          onChange={(evt) => {
-            calcCoast(evt, discount);
-            setIsMonth(true);
+          onClick={(evt) => {
+            setInIntiate(false);
+            setMonths(Number(evt.currentTarget.value));
+            calcCoast();
             handleChange();
           }}
           type="radio"
@@ -54,27 +52,19 @@ const OrderOverview = ({ onCoastsChange, sessions }: OrderOverviewProps) => {
       discountPrice: discountPrice,
       totalCoast: totalCoast,
       inAdvance: inAdvance,
-      isOrderValid: isMonth,
     });
   };
-  useEffect(() => {
-    setRegularPrice(sessions * 3.7);
+  useMemo(() => {
+    calcCoast();
     handleChange();
-  }, [sessions]);
+  }, [sessions, months]);
   useEffect(() => {
+    inIntiate && document.getElementById("month6")?.click();
     handleChange();
-  }, [discount, regularPrice, price, totalCoast, discountPrice, inAdvance, isMonth]);
+  }, [discount, regularPrice, price, totalCoast, discountPrice, inAdvance]);
   return (
     <>
-      <div
-        className="form-group radio"
-        onPointerOut={() => {
-          isMonth ? setIsMonthClicked(false) : setIsMonthClicked(true);
-        }}
-      >
-        {radioButton}
-      </div>
-      {isMonthClicked && <span className="warning mb-2"> {t("selectMonthPackage")} </span>}
+      <div className="form-group radio">{radioButton}</div>
       <div className="flex gap-2 items-start sm:items-center">
         <Switch
           color="primary"
