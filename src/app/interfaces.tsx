@@ -22,6 +22,16 @@ interface PersonalData {
   billingCity: string;
   country: string;
   sessions: string;
+  isPersonalInfoValid: boolean;
+}
+
+interface PaymentData {
+  paymentMethod: string;
+  creditCardHolder: string;
+  cardNumber: string;
+  monthYear: string;
+  cvv: string;
+  isPaymentMethodValid: boolean;
 }
 
 interface OrderData {
@@ -31,12 +41,5 @@ interface OrderData {
   discountPrice: number;
   totalCoast: number;
   inAdvance: boolean;
-}
-
-interface PaymentData {
-  paymentMethod: string;
-  creditCardHolder: string;
-  cardNumber: string;
-  monthYear: string;
-  cvv: string;
+  isOrderValid: boolean;
 }

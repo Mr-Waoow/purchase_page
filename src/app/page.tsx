@@ -10,6 +10,9 @@ import i18n from "../utils/i18n";
 
 export default function Home() {
   const { t } = useTranslation();
+  const [isTermsChecked, setIsTermsChecked] = useState(false);
+  const [isErrorTerm, setIsErrorTerm] = useState(false);
+  const [error, setError] = useState(false);
   const [selected, setSelected] = useState("GB");
   const [language, setLanguage] = useState("en");
   const [direction, setDirection] = useState("left");
@@ -24,12 +27,14 @@ export default function Home() {
     billingCity: "",
     country: "",
     sessions: "",
+    isPersonalInfoValid: false,
   });
   const [paymentMethod, setPaymentMethod] = useState({
     cardHolder: "",
     cardNumber: "",
     monthYear: "",
     numberOfSessionsPM: "",
+    isPaymentMethodValid: false,
   });
   const [order, setOrder] = useState({
     discount: 4,
@@ -37,10 +42,11 @@ export default function Home() {
     price: 0,
     totalCoast: 0,
     discountPrice: 0,
+    inAdvance: false,
+    isOrderValid: false,
   });
   const handlePersonalDataChange = (data: Partial<PersonalData>) => {
     setPersonalInfo((prev) => ({ ...prev, ...data }));
-    console.log(data);
   };
   const handlePaymentMethodDataChange = (data: any) => {
     setPaymentMethod((prev) => ({ ...prev, ...data }));
@@ -68,6 +74,28 @@ export default function Home() {
     }
     i18n.changeLanguage(language);
   }, [language]);
+
+  const onSubmit = () => {
+    if (isTermsChecked) {
+      if (
+        personalInfo.isPersonalInfoValid &&
+        paymentMethod.isPaymentMethodValid &&
+        order.isOrderValid
+      )
+        alert("Order Submitted");
+      else setError(true);
+    } else setIsErrorTerm(true);
+
+    console.log(
+      personalInfo.isPersonalInfoValid + "info",
+      paymentMethod.isPaymentMethodValid + "payment",
+      order.isOrderValid + "order"
+    );
+  };
+
+  useEffect(() => {
+    setIsErrorTerm(false);
+  }, [isTermsChecked]);
   return (
     <main>
       <header className="py-6 shadow-md border-b border-gray-100 ">
@@ -93,8 +121,12 @@ export default function Home() {
           <form className="grid grid-cols-1 sm:grid-cols-2 lg:w-3/4 w-full mx-auto card-shadow rounded-md overflow-hidden">
             <div className="bg-white flex flex-col items-center pt-12 px-10  pb-5">
               <div className="mb-10 text-center">
-                <h4 className="sm:text-lg text-[15px] font-bold">{t("heading")}</h4>
-                <p className="font-semibold text-xs sm:text-sm  text-gray-600">{t("subheading")}</p>
+                <h4 className="sm:text-lg text-[15px] font-bold">
+                  {t("heading")}
+                </h4>
+                <p className="font-semibold text-xs sm:text-sm  text-gray-600">
+                  {t("subheading")}
+                </p>
               </div>
               <PersonalInfo onFormDataChange={handlePersonalDataChange} />
               <PaymentMethods
@@ -115,6 +147,8 @@ export default function Home() {
                   className="absolute top-10 sm:top-4"
                   type="checkbox"
                   id="terms"
+                  checked={isTermsChecked}
+                  onChange={() => setIsTermsChecked(!isTermsChecked)}
                   name="terms"
                 />
                 <label
@@ -132,9 +166,22 @@ export default function Home() {
                   {t("terms4")}
                 </label>
               </div>
-              <button className="w-full mt-5 mb-8 p-4 gradient text-lg capitalize font-semibold rounded-md border border-gray-500 focus::ring focus-visible::ring">
+              <a
+                onClick={onSubmit}
+                className="w-full text-center cursor-pointer mt-5 mb-8 p-4 gradient text-lg capitalize font-semibold rounded-md border border-gray-500 focus::ring focus-visible::ring"
+              >
                 {t("orderNow")}
-              </button>
+              </a>
+              {isErrorTerm && (
+                <span className="warning text-base font-semibold text-center mb-2">
+                  {t("termError")}
+                </span>
+              )}
+              {error && (
+                <span className="warning text-base font-semibold text-center mb-2">
+                  {t("fildsError")}
+                </span>
+              )}
               <h4 className="mt-auto text-center font-bold text-lg text-gray-400">
                 {t("satisfactionRate")}
               </h4>
@@ -144,4 +191,4 @@ export default function Home() {
       </section>
     </main>
   );
-};
+}

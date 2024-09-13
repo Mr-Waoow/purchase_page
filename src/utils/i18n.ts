@@ -6,7 +6,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 // (tip move them in a JSON file and import them,
 // or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 i18n
-.use(LanguageDetector)
+  .use(LanguageDetector)
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     supportedLngs: ["en", "ar"],
@@ -55,6 +55,10 @@ i18n
           terms3: "right of withdrawal ",
           terms4:
             "as well as the circumstances that lead to a repeal of the same.",
+          invalid: "Invalid",
+          selectMonthPackage: "Please select a month package",
+          termError: "Terms and conditions must be accepted",
+          fildsError: "All fields must be filled",
         },
       },
       ar: {
@@ -100,6 +104,10 @@ i18n
           terms2: "وأفهم ",
           terms3: "حق الانسحاب ",
           terms4: "وكذلك الظروف التي تؤدي إلى إلغاء نفسها.",
+          invalid: "غير صالح",
+          selectMonthPackage: "يرجى تحديد حزمة شهرية",
+          termError: "يجب الموافقة على الشروط والأحكام",
+          fildsError: "يجب ملء جميع البيانات",
         },
       },
     },

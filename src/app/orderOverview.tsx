@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Switch from "@mui/joy/Switch";
 
-const OrderOverview = (
-  { onCoastsChange, sessions }: OrderOverviewProps
-) => {
+const OrderOverview = ({ onCoastsChange, sessions }: OrderOverviewProps) => {
   const { t } = useTranslation();
   const radioButton = [];
   const [inAdvance, setInAdvance] = useState<boolean>(false);
+  const [isMonth, setIsMonth] = useState<boolean>(false);
+  const [isMonthClicked, setIsMonthClicked] = useState<boolean>(true);
+  const [isTerm, setIsTerm] = useState<boolean>(false);
   const [discount, setDiscount] = useState<number>(inAdvance ? 9 : 4);
   const [regularPrice, setRegularPrice] = useState<number>(29.6);
   const [price, setPrice] = useState<number>(0);
@@ -32,6 +33,7 @@ const OrderOverview = (
         <input
           onChange={(evt) => {
             calcCoast(evt, discount);
+            setIsMonth(true);
             handleChange();
           }}
           type="radio"
@@ -43,6 +45,7 @@ const OrderOverview = (
       </div>
     );
   }
+
   const handleChange = () => {
     onCoastsChange({
       discount: discount,
@@ -51,6 +54,7 @@ const OrderOverview = (
       discountPrice: discountPrice,
       totalCoast: totalCoast,
       inAdvance: inAdvance,
+      isOrderValid: isMonth,
     });
   };
   useEffect(() => {
@@ -59,12 +63,18 @@ const OrderOverview = (
   }, [sessions]);
   useEffect(() => {
     handleChange();
-  }, [
-    onCoastsChange
-  ]);
+  }, [discount, regularPrice, price, totalCoast, discountPrice, inAdvance, isMonth]);
   return (
     <>
-      <div className="form-group radio">{radioButton}</div>
+      <div
+        className="form-group radio"
+        onPointerOut={() => {
+          isMonth ? setIsMonthClicked(false) : setIsMonthClicked(true);
+        }}
+      >
+        {radioButton}
+      </div>
+      {isMonthClicked && <span className="warning mb-2"> {t("selectMonthPackage")} </span>}
       <div className="flex gap-2 items-start sm:items-center">
         <Switch
           color="primary"

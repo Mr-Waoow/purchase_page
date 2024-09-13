@@ -1,11 +1,14 @@
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
 import "react-international-phone/style.css";
 import ReactFlagsSelect from "react-flags-select";
 import { useTranslation } from "react-i18next";
 import { PhoneInput } from "react-international-phone";
 
-const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
+const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
+  // Get the translation function
   const { t } = useTranslation();
+  const options = [];
+  const [isInfoValid, setIsInfoValid] = useState<boolean>(false);
   const [loginPhoneNumber, setLoginPhoneNumber] = React.useState("");
   const [contactPhoneNumber, setContactPhoneNumber] = React.useState("");
   const [contactName, setContactName] = React.useState("");
@@ -17,6 +20,137 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
   const [country, setCountry] = React.useState("");
   const [sessions, setSessions] = React.useState("8");
 
+  // Create the options for the select element
+  for (let i = 1; i < 7; i++) {
+    options.push(
+      <option key={i} value={i * 8}>
+        {i * 8 + " " + t("sessions")}
+      </option>
+    );
+  }
+
+  // Create the state for the errors
+  const [errors, setErrors] = useState({
+    loginPhoneNumber: "",
+    contactPhoneNumber: "",
+    contactName: "",
+    contactEmail: "",
+    billingAddress: "",
+    number: "",
+    billingZip: "",
+    billingCity: "",
+    country: "",
+    sessions: "",
+  });
+
+  const validateLoginPhoneNumber = (phone: string) => {
+    const regex = /^\+(\d{1,3})\d{10,12}$/;
+    return regex.test(phone) ? "" :  t("invalid") + " " + t("loginPhoneNumber");
+  };
+
+  const validateContactPhoneNumber = (phone: string) => {
+    const regex = /^\+(\d{1,3})\d{10,12}$/;
+    return regex.test(phone) ? "" :  t("invalid") + " " + t("contactPhoneNumber");
+  };
+
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email) ? "" : t("invalid") + " " + t("contactEmailAddress");
+  };
+
+  const validateName = (name: string) => {
+    const regex = /^[a-zA-Z ]{2,30}$/;
+    return regex.test(name) ? "" : t("invalid") + " " + t("contactName");
+  };
+
+  const validateAddress = (address: string) => {
+    const regex = /^[a-zA-Z0-9 ]{2,30}$/;
+    return regex.test(address) ? "" : t("invalid") + " " + t("address");
+  };
+
+  const validateNumber = (number: string) => {
+    const regex = /^[0-9]{0,3}$/;
+    return regex.test(number) ? "" :   t("invalid") + " " + t("nr");
+  };
+
+  const validateZip = (zip: string) => {
+    const regex = /^[0-9]{5}$/;
+    return regex.test(zip) ? "" : t("invalid") + " " + t("postalCode");
+  };
+
+  const validateCity = (city: string) => {
+    const regex = /^[a-zA-Z ]{2,30}$/;
+    return regex.test(city) ? "" :  t("invalid") + " " + t("city");
+  };
+
+  const validateCountry = (country: string) => {
+    return country !== "" ? "" :   t("invalid") + " " + t("country");
+  };
+
+  const validateSessions = (sessions: string) => {
+    return sessions !== "" ? "" : t("invalid") + " " + t("sessions");
+  };
+
+  // Function to validate the form data
+  const handleInputErrors = (name: string, value: string) => {
+    let newErrors = { ...errors };
+
+    if (name === "loginPhoneNumber") {
+      newErrors.loginPhoneNumber = validateLoginPhoneNumber(value);
+      console.log(newErrors.loginPhoneNumber + "login");
+    }
+
+    if (name === "contactPhoneNumber") {
+      newErrors.contactPhoneNumber = validateContactPhoneNumber(value);
+      console.log(newErrors.contactPhoneNumber + "contact");
+    }
+
+    if (name === "contactEmail") {
+      newErrors.contactEmail = validateEmail(value);
+      console.log(newErrors.contactEmail + "email");
+    }
+
+    if (name === "contactName") {
+      newErrors.contactName = validateName(value);
+      console.log(newErrors.contactName + "name");
+    }
+
+    if (name === "billingAddress") {
+      newErrors.billingAddress = validateAddress(value);
+      console.log(newErrors.billingAddress + "address");
+    }
+
+    if (name === "number") {
+      newErrors.number = validateNumber(value);
+      console.log(newErrors.number + "number");
+    }
+
+    if (name === "billingZip") {
+      newErrors.billingZip = validateZip(value);
+      console.log(newErrors.billingZip + "zip");
+    }
+
+    if (name === "billingCity") {
+      newErrors.billingCity = validateCity(value);
+      console.log(newErrors.billingCity + "city");
+    }
+
+    if (name === "country") {
+      newErrors.country = validateCountry(value);
+      console.log(newErrors.country + "country");
+    }
+
+    if (name === "sessions") {
+      newErrors.sessions = validateSessions(value);
+      console.log(newErrors.sessions + "sessions");
+    }
+
+    setErrors(newErrors);
+
+    onFormDataChange({ [name]: value });
+  };
+
+  // Function to handle the change of the form data
   const handleChange = () => {
     onFormDataChange({
       loginPhoneNumber: loginPhoneNumber,
@@ -29,24 +163,43 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
       billingCity: billingCity,
       country: country,
       sessions: sessions,
+      isPersonalInfoValid: isInfoValid,
     });
   };
 
+  //Cheak is info valid
+
+  useEffect(() => {
+    setIsInfoValid(
+      !errors.loginPhoneNumber &&
+        !errors.contactPhoneNumber &&
+        !errors.contactName &&
+        !errors.contactEmail &&
+        !errors.billingAddress &&
+        !errors.number &&
+        !errors.billingZip &&
+        !errors.billingCity &&
+        !errors.country &&
+        !errors.sessions
+    );
+  }, [errors]);
+
+  // Call the handleChange function when the form data changes
   useEffect(() => {
     handleChange();
   }, [
-    onFormDataChange
+    loginPhoneNumber,
+    contactPhoneNumber,
+    contactName,
+    contactEmail,
+    billingAddress,
+    number,
+    billingZip,
+    billingCity,
+    country,
+    sessions,
+    isInfoValid,
   ]);
-
-  const options = [];
-
-  for (let i = 1; i < 7; i++) {
-    options.push(
-      <option key={i} value={i * 8}>
-        {i * 8 + " " + t("sessions")}
-      </option>
-    );
-  }
 
   return (
     <div>
@@ -60,12 +213,17 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
         </label>
         <PhoneInput
           defaultCountry="gr"
+          defaultMask="... ... ...."
           value={loginPhoneNumber}
-          onChange={(phone) => {
-            setLoginPhoneNumber(phone);
+          onChange={(loginPhone) => {
+            setLoginPhoneNumber(loginPhone);
+            handleInputErrors("loginPhoneNumber", loginPhone);
             handleChange();
           }}
         />
+        {errors.loginPhoneNumber && (
+          <span className="warning">{errors.loginPhoneNumber}</span>
+        )}
       </div>
       <div className="form-group">
         <label>
@@ -77,12 +235,17 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
         </label>
         <PhoneInput
           defaultCountry="gr"
+          defaultMask="... ... ...."
           value={contactPhoneNumber}
-          onChange={(phone1) => {
-            setContactPhoneNumber(phone1);
+          onChange={(contactPhone) => {
+            setContactPhoneNumber(contactPhone);
+            handleInputErrors("contactPhoneNumber", contactPhone);
             handleChange();
           }}
         />
+        {errors.contactPhoneNumber && (
+          <span className="warning">{errors.contactPhoneNumber}</span>
+        )}
       </div>
       <div className="form-group">
         <label htmlFor="email">
@@ -99,9 +262,13 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
           value={contactEmail}
           onChange={(e) => {
             setContactEmail(e.target.value);
+            handleInputErrors("contactEmail", e.target.value);
             handleChange();
           }}
         />
+        {errors.contactEmail && (
+          <span className="warning">{errors.contactEmail}</span>
+        )}
       </div>
       <div className="form-group">
         <label htmlFor="name">{t("contactName")}</label>
@@ -112,73 +279,105 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
           value={contactName}
           onChange={(e) => {
             setContactName(e.target.value);
+            handleInputErrors("contactName", e.target.value);
             handleChange();
           }}
         />
+        {errors.contactName && (
+          <span className="warning">{errors.contactName}</span>
+        )}
       </div>
       <div className="form-group">
         <label>{t("billingAddress")}</label>
         <div className="flex gap-3 mb-6">
-          <input
-            className="w-9/12"
-            type="text"
-            id="billingAddress"
-            name="billingAddress"
-            value={billingAddress}
-            onChange={(e) => {
-              setBillingAddress(e.target.value);
-              handleChange();
-            }}
-            placeholder={t("address")}
-          />
-          <input
-            className="w-3/12"
-            type="text"
-            id="Number"
-            name="number"
-            value={number}
-            onChange={(e) => {
-              setNumber(e.target.value);
-              handleChange();
-            }}
-            placeholder={t("nr")}
-          />
+          <div className="w-9/12 flex flex-col">
+            <input
+              className="w-full max-h-12"
+              type="text"
+              id="billingAddress"
+              name="billingAddress"
+              value={billingAddress}
+              onChange={(e) => {
+                setBillingAddress(e.target.value);
+                handleInputErrors("billingAddress", e.target.value);
+                handleChange();
+              }}
+              placeholder={t("address")}
+            />
+            {errors.billingAddress && (
+              <span className="warning">{errors.billingAddress}</span>
+            )}
+          </div>
+          <div className="w-3/12 flex flex-col">
+            <input
+              className="w-full max-h-12"
+              type="text"
+              id="Number"
+              name="number"
+              value={number}
+              onChange={(e) => {
+                setNumber(e.target.value);
+                handleInputErrors("number", e.target.value);
+                handleChange();
+              }}
+              placeholder={t("nr")}
+            />
+            {errors.number && <span className="warning">{errors.number}</span>}
+          </div>
         </div>
         <div className="flex flex-wrap sm:flex-nowrap gap-3 mb-6">
-          <input
-            className=" w-[40%] sm:w-4/12"
-            type="text"
-            id="billingZip"
-            name="billingZip"
-            value={billingZip}
-            onChange={(e) => {
-              setBillingZip(e.target.value);
-              handleChange();
-            }}
-            placeholder={t("postalCode")}
-          />
-          <input
-            className="w-[40%] sm:w-4/12"
-            type="text"
-            id="billingCity"
-            name="billingCity"
-            value={billingCity}
-            onChange={(e) => {
-              setBillingCity(e.target.value);
-              handleChange();
-            }}
-            placeholder={t("city")}
-          />
-          <ReactFlagsSelect
-            selected={country}
-            onSelect={(code) => {
-              setCountry(code);
-              handleChange();
-            }}
-            className="menu-country w-full sm:w-4/12"
-            selectButtonClassName="menu-country-button"
-            placeholder={t("country")}
-          />
+          <div className="w-[40%] sm:w-4/12 flex flex-col">
+            <input
+              className="w-full max-h-12"
+              type="text"
+              id="billingZip"
+              name="billingZip"
+              value={billingZip}
+              onChange={(e) => {
+                setBillingZip(e.target.value);
+                handleInputErrors("billingZip", e.target.value);
+                handleChange();
+              }}
+              placeholder={t("postalCode")}
+            />
+            {errors.billingZip && (
+              <span className="warning">{errors.billingZip}</span>
+            )}
+          </div>
+          <div className="w-[40%] sm:w-4/12 flex flex-col">
+            <input
+              className="w-full max-h-12"
+              type="text"
+              id="billingCity"
+              name="billingCity"
+              value={billingCity}
+              onChange={(e) => {
+                setBillingCity(e.target.value);
+                handleInputErrors("billingCity", e.target.value);
+                handleChange();
+              }}
+              placeholder={t("city")}
+            />
+            {errors.billingCity && (
+              <span className="warning">{errors.billingCity}</span>
+            )}
+          </div>
+          <div className="w-full sm:w-4/12 flex flex-col">
+            <ReactFlagsSelect
+              selected={country}
+              onSelect={(code) => {
+                setCountry(code);
+                handleInputErrors("country", code);
+                handleChange();
+              }}
+              className="menu-country w-full max-h-12"
+              selectButtonClassName="menu-country-button"
+              placeholder={t("country")}
+            />
+            {errors.country && (
+              <span className="warning">{errors.country}</span>
+            )}
+          </div>
         </div>
       </div>
       <div className="form-group">
@@ -189,11 +388,13 @@ const PersonalInfo = ({ onFormDataChange }:PersonalInfoProps) => {
           value={sessions}
           onChange={(e) => {
             setSessions(e.target.value);
+            handleInputErrors("sessions", e.target.value);
             handleChange();
           }}
         >
           {options}
         </select>
+        {errors.sessions && <span className="warning">{errors.sessions}</span>}
       </div>
     </div>
   );
