@@ -149,15 +149,15 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
 
   useMemo(() => {
     setIsInfoValid(
-      !errors.loginPhoneNumber &&
-        !errors.contactPhoneNumber &&
-        !errors.contactName &&
-        !errors.contactEmail &&
-        !errors.billingAddress &&
-        !errors.number &&
-        !errors.billingZip &&
-        !errors.billingCity &&
-        !errors.country
+      loginPhoneNumber.length != 0 &&
+        contactPhoneNumber.length != 0 &&
+        contactName.length != 0 &&
+        contactEmail.length != 0 &&
+        billingAddress.length != 0 &&
+        number.length != 0 &&
+        billingZip.length != 0 &&
+        billingCity.length != 0 &&
+        country.length != 0
     );
   }, [errors]);
 
