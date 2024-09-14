@@ -383,7 +383,6 @@ const PersonalInfo = ({ onFormDataChange }: PersonalInfoProps) => {
         >
           {options}
         </select>
-        {errors.sessions && <span className="warning">{errors.sessions}</span>}
       </div>
     </div>
   );
